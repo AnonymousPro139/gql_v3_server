@@ -51,6 +51,8 @@ export const deleteFriend = async (friends) => {
   return;
 };
 export const unFriend = async (friendId, groupId, channelId, user, models) => {
+  console.log("UNFRIEND friendId, groupId, chId", friendId, groupId, channelId);
+
   await models.sequelize.transaction(async (transaction) => {
     await models.friend.destroy(
       {
@@ -97,6 +99,14 @@ export const unFriend = async (friendId, groupId, channelId, user, models) => {
       },
       { transaction }
     );
+    await models.channel.destroy(
+      {
+        where: {
+          id: channelId,
+        },
+      },
+      { transaction }
+    );
 
     await models.notification.create(
       {
@@ -106,16 +116,6 @@ export const unFriend = async (friendId, groupId, channelId, user, models) => {
       },
       { transaction }
     );
-    // Tuhain channel-g shalgah
-
-    // await models.channel.destroy(
-    //   {
-    //     where: {
-    //       id: channelId,
-    //     },
-    //   },
-    //   { transaction }
-    // );
   });
 
   return true;

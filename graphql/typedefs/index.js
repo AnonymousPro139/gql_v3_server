@@ -53,6 +53,9 @@ export default () => {
       myNotifications: [Notification!]
 
       getPublicKeys(userId: Int!):  UserPublicKeys!
+
+      getPushToken(userId: Int!):  PushToken
+      
     }
 
     type Mutation {
@@ -91,6 +94,9 @@ export default () => {
       """ save to Public keys """
       setPublicKeys(IdPubKey: String!, SpPubKey: String!, SignaturePubKey: String!, Signature: String!, EphPubKey: String!): Boolean!
       checkPublicKeys(hashedIdPubKey: String!, hashedSpPubKey: String! ): Boolean!
+
+    """ gql_v4 -  Хэрэглэгч өөрийн push notifation хадгалах """
+      setPushToken(pushtoken:String!):  Boolean!
     }
 
     type Subscription {
@@ -264,6 +270,15 @@ export default () => {
       user: User!
       keys: PublicKeys!
       ephkey: EphKey!
+      pushtoken: PushToken
+      
+    }
+
+    type PushToken {
+      id: Int!
+      pushtoken: String!
+      status: String!
+      createdAt: String!
     }
 
     type Channel {
@@ -290,6 +305,7 @@ export default () => {
       group: Group
       keys: PublicKeys
       ephkey: EphKey
+      pushtoken:PushToken
     }
   `;
 };

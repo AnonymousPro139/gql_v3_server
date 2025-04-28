@@ -77,6 +77,8 @@ export const createMessage = async (
   //   read: false,
   // });
 
+  console.log("createMsg: ", channelId, ": ", text);
+
   return await models.message.create({
     text: text,
     userId: user.id,
@@ -226,6 +228,7 @@ export const getMessages = async (channelId, offset, limit, models, user) => {
     return;
   }
 
+  console.log("GET MESSAGES channelId:", channelId);
   const messages = await models.message.findAll({
     where: {
       channelId: channelId,

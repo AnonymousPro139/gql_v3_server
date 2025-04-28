@@ -48,7 +48,8 @@ export const login = asyncHandler(async (req, res, next) => {
     user.lid,
     user.role,
     user.name,
-    data.avatar_link
+    data.avatar_link,
+    user.phone
   );
 
   delete user.dataValues["password"];
@@ -147,6 +148,17 @@ export const register = asyncHandler(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+  });
+});
+export const logout = asyncHandler(async (req, res, next) => {
+  const cookieOption = {
+    expires: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  res.status(200).cookie("token", null, cookieOption).json({
+    success: true,
+    data: "Logged out!",
   });
 });
 
@@ -288,9 +300,9 @@ export const findChannelForUser = async (channelId, userId) => {
 
   if (!check) {
     return false;
+  } else {
+    return true;
   }
-
-  return true;
 };
 
 export const setAvatar = async (link, id, models) => {
@@ -484,4 +496,55 @@ const byteArrayToHexString = (byteArray) => {
     hexString += nextHexByte;
   }
   return hexString;
+};
+
+// gql_v4
+export const setPushToken = async (pushtoken, models, user) => {
+  const check = await models.push_notification.findOne({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!check) {
+    // шинээр үүсгэх
+    await models.push_notification.create({
+      pushtoken: pushtoken,
+      status: "active",
+      userId: user.id,
+    });
+    return true;
+  } else {
+    // байсан бол status-г нь pushtoken-той нь солих
+    if (check.status !== "active") {
+      await check.update({ status: "active", pushtoken: pushtoken });
+      await check.save();
+
+      return true;
+    } else {
+      return true;
+    }
+  }
+};
+
+export const getPushToken = async (userId, models) => {
+  if (!userId) {
+    throwBadRequest("Pass the userId");
+    return;
+  }
+
+  const token = await models.push_notification.findOne({
+    where: { userId: userId },
+  });
+
+  if (!token) {
+    return {
+      id: 0,
+      pushtoken: "",
+      status: "",
+      createdAt: "",
+    };
+  }
+
+  return token;
 };

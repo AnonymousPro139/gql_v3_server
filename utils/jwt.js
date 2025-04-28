@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { throwUnauthenicated } from "./Error.js";
 
-export const getJWT = (id, lid, role, name, avatar) => {
+export const getJWT = (id, lid, role, name, avatar, phone) => {
   const token = jwt.sign(
     {
       id: id,
@@ -10,6 +10,7 @@ export const getJWT = (id, lid, role, name, avatar) => {
       role: role,
       name: name,
       avatar: avatar,
+      phone: phone
     },
     process.env.JWT_SECRET,
     {

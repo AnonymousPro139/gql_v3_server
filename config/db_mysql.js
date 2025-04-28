@@ -20,6 +20,9 @@ import Log from "../models/sequelize/Log.js";
 import Key from "../models/sequelize/Key.js";
 import EphKey from "../models/sequelize/EphKey.js";
 
+// // энэ-г v4 дээр нэмэв
+import PushNotification from "../models/sequelize/PushNotification.js";
+
 // import { Sequelize } from "sequelize";
 var db = {};
 
@@ -62,6 +65,7 @@ const models = [
   Log,
   Key,
   EphKey,
+  PushNotification,
 ];
 
 models.forEach((model) => {

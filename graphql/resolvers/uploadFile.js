@@ -2,6 +2,7 @@ import { finished } from "stream/promises";
 import fs from "fs";
 import path from "path";
 import MyError from "../../utils/myError.js";
+import { throwUnauthenicated } from "../../utils/Error.js";
 
 export default {
   Mutation: {
@@ -30,6 +31,7 @@ export default {
     },
 
     multipleUpload: async (root, { files }, { models, token, user }) => {
+      console.log("iishee orloo");
       if (!user || !token) {
         throwUnauthenicated();
         return;

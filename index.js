@@ -29,6 +29,7 @@ import typeDefs from "./graphql/typedefs/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { checkToken, file_protect } from "./middlewares/file_protect.js";
+import { trusted } from "mongoose";
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -43,6 +44,9 @@ app.use(
       "http://localhost:3001",
       "http://172.16.12.21:3000",
       "http://172.16.12.205:3000",
+      "http://172.16.12.206:3000",
+      "http://172.16.12.208:3000",
+
       "http://172.16.12.207:5173",
       "http://localhost:5173",
       "https://gql-v2-client.vercel.app/",
@@ -163,7 +167,6 @@ app.use(
 apolloServer.start().then(() => {
   app.use(
     "/graphql",
-
     expressMiddleware(apolloServer, {
       context: ({ req }) => {
         if (
@@ -209,7 +212,7 @@ apolloServer.start().then(() => {
 
 app.use(errorHandler); // Anhaar!!! apollo n ooroo bidnii throw hiisen error-g ywuulad bga
 
-db_mongo();
+// db_mongo();
 
 db.sequelize
   .sync()
@@ -296,6 +299,12 @@ db.ephkey.belongsTo(db.user);
 db.ephkey.hasMany(db.message);
 db.message.belongsTo(db.ephkey);
 
+// v4 дээр нэмэв
+db.user.hasOne(db.push_notification);
+db.push_notification.belongsTo(db.user);
+
 httpServer.listen(process.env.PORT, () =>
-  console.log(`[vers-3] Server listening on port ${process.env.PORT}`)
+  console.log(
+    `[vers-4] Server listening on port ${process.env.PORT}, db: ${process.env.SEQUELIZE_DATABASE}`
+  )
 );

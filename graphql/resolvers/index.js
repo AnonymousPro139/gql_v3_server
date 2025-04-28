@@ -5,6 +5,7 @@ import groupResolvers from "./group.js";
 import friendResolvers from "./friend.js";
 import fileResolvers from "./uploadFile.js";
 import notificationResolvers from "./notification.js";
+import pushtokenResolvers from "./pushnotification.js";
 
 export default {
   // This maps the `Upload` scalar to the implementation provided
@@ -25,6 +26,7 @@ export default {
     ...friendResolvers.Mutation,
     ...fileResolvers.Mutation,
     ...notificationResolvers.Mutation,
+    ...pushtokenResolvers.Mutation,
   },
   Subscription: {
     ...msgResolvers.Subscription,

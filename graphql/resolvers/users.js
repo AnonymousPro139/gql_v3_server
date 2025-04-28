@@ -10,6 +10,7 @@ import {
   setPublicKeys,
   getPublicKeys,
   checkPublicKeys,
+  getPushToken,
 } from "../../controller/User.js";
 
 import { throwUnauthenicated, throwBadRequest } from "../../utils/Error.js";
@@ -96,6 +97,20 @@ export default {
 
       return getPublicKeys(userId, models);
     },
+
+    getPushToken: (root, { userId }, { models, token, user }) => {
+      if (!user || !token) {
+        throwUnauthenicated();
+        return;
+      }
+
+      if (!userId) {
+        throwBadRequest();
+        return;
+      }
+
+      return getPushToken(userId, models);
+    },
   },
 
   Mutation: {
@@ -148,7 +163,14 @@ export default {
         !SignaturePubKey ||
         !EphPubKey
       ) {
+        console.log("1", IdPubKey);
+        console.log("2", SpPubKey);
+        console.log("3", Signature);
+        console.log("4", SignaturePubKey);
+        console.log("5", EphPubKey);
+
         throwBadRequest();
+        return;
       }
 
       return setPublicKeys(
