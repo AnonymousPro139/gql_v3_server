@@ -14,7 +14,7 @@ const PushNotification = function (sequelize, DataTypes) {
       },
       status: {
         type: DataTypes.STRING(12),
-        defaultValue: "active",
+        defaultValue: "inactive",
       },
     },
     {

@@ -21,6 +21,10 @@ import {
   getMediaFiles,
 } from "../../controller/Message.js";
 import { findChannelForUser } from "../../controller/User.js";
+import {
+  sendMultiPushNotification,
+  sendPushNotification,
+} from "../../controller/Notification.js";
 
 const pubsub = new RedisPubSub({
   publisher: new Redis(redisOptions),
@@ -109,6 +113,14 @@ export default {
           name: user.name,
         },
       });
+
+      if (msg.dm) {
+        // sending push notification from client, but need to change it
+        await sendPushNotification(msg.channelId, models, user);
+      } else {
+        // send multiple push notification
+        await sendMultiPushNotification(msg.channelId, models, user);
+      }
 
       return true;
     },

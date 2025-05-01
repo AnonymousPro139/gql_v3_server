@@ -77,8 +77,6 @@ export const createMessage = async (
   //   read: false,
   // });
 
-  console.log("createMsg: ", channelId, ": ", text);
-
   return await models.message.create({
     text: text,
     userId: user.id,

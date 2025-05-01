@@ -1,4 +1,6 @@
-import { Op } from "sequelize";
+import { Op, where } from "sequelize";
+import { Expo } from "expo-server-sdk";
+// const { Expo } = require('expo-server-sdk');
 
 export const myNotifications = async (models, user) => {
   const tmp = await models.notification.findAll({
@@ -51,4 +53,121 @@ export const myNotifications = async (models, user) => {
       };
     }) ?? []
   );
+};
+
+// multiple push notification
+export const sendMultiPushNotification = async (channelId, models, user) => {
+  const expo = new Expo();
+
+  // тухайн channel-д байгаа users-g pushtoken той нь авах
+  const group = await models.group.findOne({
+    where: {
+      channelId: channelId,
+    },
+    attributes: ["name"],
+    include: [
+      {
+        model: models.user,
+
+        attributes: ["id"],
+        include: {
+          model: models.push_notification,
+          attributes: ["status", "pushtoken"],
+        },
+      },
+    ],
+  });
+
+  const pushtokens =
+    group?.users.map((usr) => {
+      var tmp = usr.push_notification;
+      if (
+        usr.id !== user.id &&
+        tmp?.status === "active" &&
+        tmp?.pushtoken !== undefined &&
+        tmp?.pushtoken !== ""
+      ) {
+        return {
+          to: tmp.pushtoken,
+          title: group.name,
+          body: "New message",
+          data: {
+            navigate: "Groups",
+          },
+        };
+      }
+    }) ?? null;
+
+  // remove undefined
+  const result = pushtokens?.filter((e) => e !== undefined);
+
+  if (result?.length > 0) {
+    let chunks = expo.chunkPushNotifications(result);
+    for (let chunk of chunks) {
+      try {
+        let receipts = await expo.sendPushNotificationsAsync(chunk);
+        console.log("Push notification receipts:", receipts);
+      } catch (error) {
+        console.error("Push notification error:", error);
+      }
+    }
+  }
+};
+
+export const sendPushNotification = async (channelId, models, user) => {
+  const expo = new Expo();
+
+  // тухайн channel-д байгаа users-g pushtoken той нь авах
+  const group = await models.group.findOne({
+    where: {
+      channelId: channelId,
+    },
+    attributes: ["name"],
+    include: [
+      {
+        model: models.user,
+
+        attributes: ["id"],
+        include: {
+          model: models.push_notification,
+          attributes: ["status", "pushtoken"],
+        },
+      },
+    ],
+  });
+
+  const pushtokens =
+    group?.users.map((usr) => {
+      var tmp = usr.push_notification;
+      if (
+        usr.id !== user.id &&
+        tmp?.status === "active" &&
+        tmp?.pushtoken !== undefined &&
+        tmp?.pushtoken !== ""
+      ) {
+        return {
+          to: tmp.pushtoken,
+          title: group.name,
+          body: "New message shuu serversees",
+          data: {
+            navigate: "Chats",
+          },
+        };
+      }
+    }) ?? null;
+
+  // remove undefined
+  const result = pushtokens?.filter((e) => e !== undefined);
+
+  if (result?.length > 0) {
+    let chunks = expo.chunkPushNotifications(result);
+    for (let chunk of chunks) {
+      try {
+        let receipts = await expo.sendPushNotificationsAsync(chunk);
+        console.log("Push notification receipts:", receipts);
+      } catch (error) {
+        console.error("Push notification error:", error);
+      }
+    }
+  }
 };
