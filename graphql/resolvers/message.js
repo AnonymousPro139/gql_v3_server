@@ -115,11 +115,16 @@ export default {
       });
 
       if (msg.dm) {
-        // sending push notification from client, but need to change it
-        await sendPushNotification(msg.channelId, models, user);
+        // sending push notification
+        await sendPushNotification(msg.userId, msg.channelId, models, user);
       } else {
         // send multiple push notification
-        await sendMultiPushNotification(msg.channelId, models, user);
+        await sendMultiPushNotification(
+          msg.userId,
+          msg.channelId,
+          models,
+          user
+        );
       }
 
       return true;

@@ -54,7 +54,6 @@ export default () => {
 
       getPublicKeys(userId: Int!):  UserPublicKeys!
 
-      getPushToken(userId: Int!):  PushToken
       
     }
 
@@ -270,7 +269,6 @@ export default () => {
       user: User!
       keys: PublicKeys!
       ephkey: EphKey!
-      pushtoken: PushToken
       
     }
 
@@ -305,7 +303,6 @@ export default () => {
       group: Group
       keys: PublicKeys
       ephkey: EphKey
-      pushtoken:PushToken
     }
   `;
 };

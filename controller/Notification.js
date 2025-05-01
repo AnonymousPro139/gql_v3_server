@@ -56,7 +56,12 @@ export const myNotifications = async (models, user) => {
 };
 
 // multiple push notification
-export const sendMultiPushNotification = async (channelId, models, user) => {
+export const sendMultiPushNotification = async (
+  senderId,
+  channelId,
+  models,
+  user
+) => {
   const expo = new Expo();
 
   // тухайн channel-д байгаа users-g pushtoken той нь авах
@@ -69,7 +74,7 @@ export const sendMultiPushNotification = async (channelId, models, user) => {
       {
         model: models.user,
 
-        attributes: ["id"],
+        attributes: ["id", "name"],
         include: {
           model: models.push_notification,
           attributes: ["status", "pushtoken"],
@@ -77,6 +82,8 @@ export const sendMultiPushNotification = async (channelId, models, user) => {
       },
     ],
   });
+
+  const sender = group?.users.filter((e) => e.id === senderId);
 
   const pushtokens =
     group?.users.map((usr) => {
@@ -90,7 +97,7 @@ export const sendMultiPushNotification = async (channelId, models, user) => {
         return {
           to: tmp.pushtoken,
           title: group.name,
-          body: "New message",
+          body: `${sender[0].name}: New message`,
           data: {
             navigate: "Groups",
           },
@@ -106,15 +113,20 @@ export const sendMultiPushNotification = async (channelId, models, user) => {
     for (let chunk of chunks) {
       try {
         let receipts = await expo.sendPushNotificationsAsync(chunk);
-        console.log("Push notification receipts:", receipts);
+        console.log("Multi push notification receipts:", receipts);
       } catch (error) {
-        console.error("Push notification error:", error);
+        console.error("Multi push notification error:", error);
       }
     }
   }
 };
 
-export const sendPushNotification = async (channelId, models, user) => {
+export const sendPushNotification = async (
+  senderId,
+  channelId,
+  models,
+  user
+) => {
   const expo = new Expo();
 
   // тухайн channel-д байгаа users-g pushtoken той нь авах
@@ -122,12 +134,11 @@ export const sendPushNotification = async (channelId, models, user) => {
     where: {
       channelId: channelId,
     },
-    attributes: ["name"],
+    attributes: ["id"],
     include: [
       {
         model: models.user,
-
-        attributes: ["id"],
+        attributes: ["id", "name"],
         include: {
           model: models.push_notification,
           attributes: ["status", "pushtoken"],
@@ -136,7 +147,9 @@ export const sendPushNotification = async (channelId, models, user) => {
     ],
   });
 
-  const pushtokens =
+  const sender = group?.users.filter((e) => e.id === senderId);
+
+  const pushtoken =
     group?.users.map((usr) => {
       var tmp = usr.push_notification;
       if (
@@ -147,8 +160,8 @@ export const sendPushNotification = async (channelId, models, user) => {
       ) {
         return {
           to: tmp.pushtoken,
-          title: group.name,
-          body: "New message shuu serversees",
+          title: sender[0].name,
+          body: "New message",
           data: {
             navigate: "Chats",
           },
@@ -157,7 +170,7 @@ export const sendPushNotification = async (channelId, models, user) => {
     }) ?? null;
 
   // remove undefined
-  const result = pushtokens?.filter((e) => e !== undefined);
+  const result = pushtoken?.filter((e) => e !== undefined);
 
   if (result?.length > 0) {
     let chunks = expo.chunkPushNotifications(result);

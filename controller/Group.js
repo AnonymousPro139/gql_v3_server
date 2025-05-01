@@ -66,9 +66,6 @@ export const getPrivateGroups = async (models, id) => {
             model: models.ephkey,
             attributes: ["id", "ephkey", "userId", "createdAt"],
           },
-          {
-            model: models.push_notification,
-          },
         ],
       },
     },
@@ -93,13 +90,7 @@ export const getPrivateGroups = async (models, id) => {
           id: tmp?.ephkeys[tmp.ephkeys.length - 1]?.id ?? 0,
           userId: tmp?.ephkeys[tmp.ephkeys.length - 1]?.userId ?? 0,
           ephkey: tmp?.ephkeys[tmp.ephkeys.length - 1]?.ephkey ?? "",
-        },
-        pushtoken: {
-          id: tmp?.push_notification?.id ?? 0,
-          status: tmp?.push_notification?.status ?? "",
-          pushtoken: tmp?.push_notification?.pushtoken ?? "",
-          createdAt: tmp?.push_notification?.createdAt ?? "",
-        },
+        }
       };
     }) ?? null
   );

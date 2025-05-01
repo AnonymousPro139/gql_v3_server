@@ -527,24 +527,3 @@ export const setPushToken = async (pushtoken, models, user) => {
   }
 };
 
-export const getPushToken = async (userId, models) => {
-  if (!userId) {
-    throwBadRequest("Pass the userId");
-    return;
-  }
-
-  const token = await models.push_notification.findOne({
-    where: { userId: userId },
-  });
-
-  if (!token) {
-    return {
-      id: 0,
-      pushtoken: "",
-      status: "",
-      createdAt: "",
-    };
-  }
-
-  return token;
-};

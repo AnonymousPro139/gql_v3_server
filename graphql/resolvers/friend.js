@@ -9,11 +9,7 @@ import {
   redisOptions,
   UNFRIEND,
 } from "../const.js";
-import {
-  getPublicKeys,
-  getPushToken,
-  getUserGQL,
-} from "../../controller/User.js";
+import { getPublicKeys, getUserGQL } from "../../controller/User.js";
 import { createMember } from "../../controller/Member.js";
 import {
   createFriend,
@@ -176,9 +172,6 @@ export default {
           // public keys-g awah
           var pubkeys = await getPublicKeys(user.id, models);
 
-          // push token-g n awah
-          var pushtoken = await getPushToken(user.id, models);
-
           pubsub.publish(FRIEND_REQUEST_RESPONSE, {
             candidate_userId,
             friendRequestResponse: {
@@ -202,12 +195,6 @@ export default {
                 id: pubkeys?.ephkey?.id ?? 0,
                 userId: user.id,
                 ephkey: pubkeys?.ephkey?.ephkey ?? "",
-              },
-              pushtoken: {
-                id: pushtoken?.id ?? 0,
-                pushtoken: pushtoken?.pushtoken ?? "",
-                status: pushtoken?.status ?? "",
-                createdAt: pushtoken?.createdAt ?? "",
               },
               isAllow,
             },
