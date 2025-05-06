@@ -31,7 +31,7 @@ export default {
     },
 
     multipleUpload: async (root, { files }, { models, token, user }) => {
-      console.log("iishee orloo");
+      console.log("multipleUpload orloo");
       if (!user || !token) {
         throwUnauthenicated();
         return;

@@ -96,6 +96,8 @@ export default () => {
 
     """ gql_v4 -  Хэрэглэгч өөрийн push notifation хадгалах """
       setPushToken(pushtoken:String!):  Boolean!
+
+      removePushToken:  Boolean!
     }
 
     type Subscription {

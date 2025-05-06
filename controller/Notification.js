@@ -60,7 +60,8 @@ export const sendMultiPushNotification = async (
   senderId,
   channelId,
   models,
-  user
+  user,
+  isFile = false
 ) => {
   const expo = new Expo();
 
@@ -97,7 +98,9 @@ export const sendMultiPushNotification = async (
         return {
           to: tmp.pushtoken,
           title: group.name,
-          body: `${sender[0].name}: New message`,
+          body: isFile
+            ? `${sender[0].name}: New file`
+            : `${sender[0].name}: New message`,
           data: {
             navigate: "Groups",
           },
@@ -125,7 +128,8 @@ export const sendPushNotification = async (
   senderId,
   channelId,
   models,
-  user
+  user,
+  isFile = false
 ) => {
   const expo = new Expo();
 
@@ -161,7 +165,7 @@ export const sendPushNotification = async (
         return {
           to: tmp.pushtoken,
           title: sender[0].name,
-          body: "New message",
+          body: isFile ? "New file" : "New message",
           data: {
             navigate: "Chats",
           },

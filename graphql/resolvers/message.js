@@ -157,6 +157,26 @@ export default {
         },
       });
 
+      if (msg.dm) {
+        // sending push notification
+        await sendPushNotification(
+          msg.userId,
+          msg.channelId,
+          models,
+          user,
+          true
+        );
+      } else {
+        // send multiple push notification
+        await sendMultiPushNotification(
+          msg.userId,
+          msg.channelId,
+          models,
+          user,
+          true
+        );
+      }
+
       return true;
     },
 

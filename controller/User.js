@@ -151,6 +151,10 @@ export const register = asyncHandler(async (req, res, next) => {
   });
 });
 export const logout = asyncHandler(async (req, res, next) => {
+  if (req.query.uid) {
+    console.log("uid", req.query.uid);
+  }
+
   const cookieOption = {
     expires: new Date(Date.now() - 5 * 365 * 24 * 60 * 60 * 1000),
     httpOnly: true,
@@ -527,3 +531,16 @@ export const setPushToken = async (pushtoken, models, user) => {
   }
 };
 
+export const removePushToken = async (models, user) => {
+  console.log("REMOVE PUSH TOKEN---");
+  const tmp = await models.push_notification.findOne({
+    where: { userId: user.id, status: "active" },
+  });
+
+  if (tmp) {
+    // устгах
+    await tmp.destroy();
+  }
+
+  return true;
+};
