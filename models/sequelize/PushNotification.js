@@ -16,6 +16,11 @@ const PushNotification = function (sequelize, DataTypes) {
         type: DataTypes.STRING(12),
         defaultValue: "inactive",
       },
+      lastNotificationTime: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
     },
     {
       tableName: "push_notification",

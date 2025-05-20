@@ -1,5 +1,6 @@
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 import { Expo } from "expo-server-sdk";
+import { DEBOUNCE_PUSH_NOTIFICATION_TIME } from "../graphql/const.js";
 // const { Expo } = require('expo-server-sdk');
 
 export const myNotifications = async (models, user) => {
@@ -78,7 +79,7 @@ export const sendMultiPushNotification = async (
         attributes: ["id", "name"],
         include: {
           model: models.push_notification,
-          attributes: ["status", "pushtoken"],
+          attributes: ["status", "pushtoken", "lastNotificationTime"],
         },
       },
     ],
@@ -89,12 +90,37 @@ export const sendMultiPushNotification = async (
   const pushtokens =
     group?.users.map((usr) => {
       var tmp = usr.push_notification;
+
+      if (tmp?.lastNotificationTime !== undefined) {
+        const now = Date.now();
+
+        if (now - tmp.lastNotificationTime < DEBOUNCE_PUSH_NOTIFICATION_TIME) {
+          return;
+        }
+      }
+
       if (
         usr.id !== user.id &&
         tmp?.status === "active" &&
         tmp?.pushtoken !== undefined &&
         tmp?.pushtoken !== ""
       ) {
+        // update and set lastNotification time to Date.now
+        models.push_notification
+          .findOne({
+            where: {
+              userId: usr.id,
+            },
+          })
+          .then((res) => {
+            res.update({ lastNotificationTime: Date.now() }).then((res) =>
+              res.save().then(() => {
+                console.log("The lastNotificationTime successfully changed...");
+              })
+            );
+          })
+          .catch((err) => console.log("error:", err));
+
         return {
           to: tmp.pushtoken,
           title: group.name,
@@ -145,7 +171,7 @@ export const sendPushNotification = async (
         attributes: ["id", "name"],
         include: {
           model: models.push_notification,
-          attributes: ["status", "pushtoken"],
+          attributes: ["status", "pushtoken", "lastNotificationTime"],
         },
       },
     ],
@@ -156,12 +182,37 @@ export const sendPushNotification = async (
   const pushtoken =
     group?.users.map((usr) => {
       var tmp = usr.push_notification;
+
+      if (tmp?.lastNotificationTime !== undefined) {
+        const now = Date.now();
+
+        if (now - tmp.lastNotificationTime < DEBOUNCE_PUSH_NOTIFICATION_TIME) {
+          return;
+        }
+      }
+
       if (
         usr.id !== user.id &&
         tmp?.status === "active" &&
         tmp?.pushtoken !== undefined &&
         tmp?.pushtoken !== ""
       ) {
+        // update and set lastNotification time to Date.now
+        models.push_notification
+          .findOne({
+            where: {
+              userId: usr.id,
+            },
+          })
+          .then((res) => {
+            res.update({ lastNotificationTime: Date.now() }).then((res) =>
+              res.save().then(() => {
+                console.log("The lastNotificationTime successfully changed");
+              })
+            );
+          })
+          .catch((err) => console.log("error:", err));
+
         return {
           to: tmp.pushtoken,
           title: sender[0].name,

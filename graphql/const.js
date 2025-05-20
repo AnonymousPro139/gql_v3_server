@@ -14,3 +14,5 @@ export const redisOptions = {
   host: "localhost",
   port: 6379,
 };
+
+export const DEBOUNCE_PUSH_NOTIFICATION_TIME = 1 * 60 * 1024; // 1 minute
