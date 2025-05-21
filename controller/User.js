@@ -11,6 +11,7 @@ import MyError from "../utils/myError.js";
 import { getJWT, checkPassword } from "../utils/jwt.js";
 import db from "../config/db_mysql.js";
 import { throwBadRequest } from "../utils/Error.js";
+import { decrypt } from "../utils/crypto.js";
 
 const detector = new DeviceDetector({
   clientIndexes: true,
@@ -23,15 +24,19 @@ export const login = asyncHandler(async (req, res, next) => {
     throw new MyError("Phone or password incorrect", 400);
   }
 
+  // decrypt data
+  const decPhone = decrypt(req.body.phone);
+  const decPassword = decrypt(req.body.password);
+
   const user = await db.user.findOne({
-    where: { phone: req.body.phone, status: "active" },
+    where: { phone: decPhone, status: "active" },
   });
 
   if (!user) {
     throw new MyError("Phone or password incorrect (or blocked)!", 401);
   }
 
-  const ok = await checkPassword(req.body.password, user.password);
+  const ok = await checkPassword(decPassword, user.password);
   if (!ok) {
     throw new MyError("Phone or password incorrect!!", 401);
   }

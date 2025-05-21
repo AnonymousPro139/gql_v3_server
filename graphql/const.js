@@ -16,3 +16,6 @@ export const redisOptions = {
 };
 
 export const DEBOUNCE_PUSH_NOTIFICATION_TIME = 1 * 60 * 1024; // 1 minute
+
+export const ENC_SECRET_KEY =
+  "addb23135f06f0cefd208b58884fb94d62dc096b20337dcb";
