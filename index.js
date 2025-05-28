@@ -29,7 +29,6 @@ import typeDefs from "./graphql/typedefs/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { checkToken, file_protect } from "./middlewares/file_protect.js";
-import { trusted } from "mongoose";
 
 const app = express();
 const httpServer = http.createServer(app);

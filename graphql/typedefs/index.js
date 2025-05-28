@@ -88,7 +88,7 @@ export default () => {
       
       """ Файл илгээх """
       singleUpload( file: Upload!): File!
-      multipleUpload(files: [Upload]!): FileResponse!
+      multipleUpload(files: [Upload]!, channelId: Int!): FileResponse!
 
       """ save to Public keys """
       setPublicKeys(IdPubKey: String!, SpPubKey: String!, SignaturePubKey: String!, Signature: String!, EphPubKey: String!): Boolean!

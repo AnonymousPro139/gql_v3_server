@@ -2,7 +2,7 @@ import { finished } from "stream/promises";
 import fs from "fs";
 import path from "path";
 import MyError from "../../utils/myError.js";
-import { throwUnauthenicated } from "../../utils/Error.js";
+import { throwBadRequest, throwUnauthenicated } from "../../utils/Error.js";
 
 export default {
   Mutation: {
@@ -30,15 +30,18 @@ export default {
       return { filename, mimetype, encoding };
     },
 
-    multipleUpload: async (root, { files }, { models, token, user }) => {
-      console.log("multipleUpload orloo");
+    multipleUpload: async (
+      root,
+      { files, channelId },
+      { models, token, user }
+    ) => {
       if (!user || !token) {
         throwUnauthenicated();
         return;
       }
 
-      if (!files) {
-        throwUnauthenicated();
+      if (!files || !channelId) {
+        throwBadRequest();
         return;
       }
 
@@ -54,18 +57,39 @@ export default {
             .replaceAll("?", "")
             .trim();
 
+          const now = Date.now().toString();
           const salt = Math.random().toString().slice(2, 7); // random string
 
-          tmpName =
-            tmpName.split(".")[0].slice(0, 24) +
+          const date = new Date();
+          const GENERAL_PATH = "uploads/";
+          // /year/month/channelId
+          const createdPath = `${date.getFullYear()}/${
+            date.getMonth() + 1
+          }/${channelId}`;
+
+          // file name format : timestamp_channelId_fromUserId_salt.extension
+          const fname =
+            now +
+            "_" +
+            channelId +
+            "_" +
+            user.id +
             "_" +
             salt +
             "." +
             tmpName.split(".")[tmpName.split(".").length - 1];
 
-          tmpName = Math.random().toString().slice(2, 5) + "_" + tmpName;
+          fs.mkdir(
+            GENERAL_PATH + createdPath,
+            { recursive: true },
+            (err, path) => {
+              if (path !== undefined) {
+                console.log("Created new directory in uploads/: ", path);
+              }
+            }
+          );
 
-          const tmp = path.join("uploads", tmpName);
+          const tmp = path.join(GENERAL_PATH + createdPath, fname);
 
           const stream = createReadStream();
 
@@ -84,7 +108,11 @@ export default {
               throw new MyError("oho nono ", 401);
             });
 
-          return { filename: tmpName, mimetype, encoding };
+          return {
+            filename: createdPath + "/" + fname,
+            mimetype,
+            encoding,
+          };
         });
       } catch (err) {
         console.log("Multiple upload error: ", err);
