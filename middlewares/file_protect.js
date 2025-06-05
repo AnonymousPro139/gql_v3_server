@@ -37,8 +37,6 @@ export const file_protect = expressAsyncHandler(async (req, res, next) => {
     throw new MyError("Not accessed..", 401);
   }
 
-  console.log("dwawai!!!!!!");
-
   next();
 });
 
@@ -72,6 +70,5 @@ export const checkToken = (req, res, next) => {
   req.userId = data.id;
   req.userRole = data.role;
 
-  console.log("dawai token!!!!");
   next();
 };

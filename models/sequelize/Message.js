@@ -37,7 +37,7 @@ const Message = function (sequelize, DataTypes) {
         defaultValue: false,
       },
       fileViewToken: {
-        type: DataTypes.STRING(300),
+        type: DataTypes.STRING(350),
         defaultValue: "undefined",
       },
     },
