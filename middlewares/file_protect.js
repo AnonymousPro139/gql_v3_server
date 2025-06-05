@@ -7,6 +7,8 @@ export const file_protect = expressAsyncHandler(async (req, res, next) => {
   // console.log("PROTECT:", req.query);
   // console.log("+++:", req.protocol, req.get("host"), req.url, req.originalUrl);
 
+  // End tuhain hereglegchiiiin token-g shalgaj ywuulmaar bna, Odoogooor ogt token-gui hun c duudaj chadaj bna, ghde encrypted data awna
+
   if (!req.query.fileViewToken) {
     throw new MyError("Not accessed", 401);
   }
@@ -21,9 +23,11 @@ export const file_protect = expressAsyncHandler(async (req, res, next) => {
   // Tuhain file-n url ni data.name-d bga file mun eseh, Ө.х ямар ч хамаагүй файлыг нэг fileViewToken-р авах боломжийг хаах
   const pathUrl = req.originalUrl.split("?")[0]; //  --> /uploads/123_test.png
   const fileName = pathUrl.split("/")[pathUrl.split("/").length - 1]; // --> 123_test.png
-  // the substring to search for in the string
-  // /uploads/786_schema.PNG --> 786_schema.PNG --> 786
-  if (data.name.indexOf(fileName.split("_")[0]) === -1) {
+
+  // fileName is --> 1749002652270_179_8_23000.jpg --> 1749002652270_179_8_23000
+  // 1749002652270_179_8_23000,1749002652277_179_8_25171 endeees 1749002652270_179_8_23000 eniiig haina
+
+  if (data.name.indexOf(fileName.split(".")[0]) === -1) {
     throw new MyError("Not accessed.", 401);
   }
 
@@ -32,6 +36,8 @@ export const file_protect = expressAsyncHandler(async (req, res, next) => {
   if (check === false) {
     throw new MyError("Not accessed..", 401);
   }
+
+  console.log("dwawai!!!!!!");
 
   next();
 });
@@ -51,13 +57,14 @@ export const checkToken = (req, res, next) => {
     token = req.headers.authorization.split(" ")[1];
   } else {
     // cookie-s огт уншихгүй байгаа тул хаая
-    // if (req.cookies) {
+    // if (req.cookies) {---
     //   token = req.cookies["token"];
     // }
   }
 
   if (!token) {
     throw new MyError("Permission denied", 401);
+    return;
   }
 
   const data = verifyJWT(token);
@@ -65,5 +72,6 @@ export const checkToken = (req, res, next) => {
   req.userId = data.id;
   req.userRole = data.role;
 
+  console.log("dawai token!!!!");
   next();
 };

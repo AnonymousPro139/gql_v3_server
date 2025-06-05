@@ -87,7 +87,13 @@ export const createMessage = async (
     isInfo: isInfo,
   });
 };
-export const createFileMessage = async (channelId, text, models, user) => {
+export const createFileMessage = async (
+  channelId,
+  msgKey,
+  text,
+  models,
+  user
+) => {
   const check = await checkChannelAccess(channelId, user.id, models);
 
   if (!check) {
@@ -105,6 +111,7 @@ export const createFileMessage = async (channelId, text, models, user) => {
     isFile: true,
     fileViewToken: fileViewToken,
     text: text,
+    msgKey: msgKey,
     userId: user.id,
     channelId: channelId,
     dm: check.channel.dm,

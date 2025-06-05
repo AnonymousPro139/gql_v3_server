@@ -60,6 +60,7 @@ app.use("/public", checkToken, express.static(path.join(__dirname, "public")));
 // GET
 app.use(
   "/uploads",
+  checkToken,
   file_protect,
   express.static(path.join(__dirname, "uploads"))
 );

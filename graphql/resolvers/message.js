@@ -132,7 +132,7 @@ export default {
 
     createFileMessage: async (
       root,
-      { channelId, text },
+      { channelId, msgKey, text },
       { models, token, user }
     ) => {
       if (!user || !token) {
@@ -145,7 +145,13 @@ export default {
         return;
       }
 
-      const msg = await createFileMessage(channelId, text, models, user);
+      const msg = await createFileMessage(
+        channelId,
+        msgKey,
+        text,
+        models,
+        user
+      );
 
       pubsub.publish(NEW_CHANNEL_MESSAGE, {
         channelId: channelId,

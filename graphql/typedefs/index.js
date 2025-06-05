@@ -61,7 +61,7 @@ export default () => {
       deleteUser(id: Int!): User
 
       createMessage(channelId: Int!, msgKey: String!,  text: String!, isInfo: Boolean!): Boolean!
-      createFileMessage(channelId: Int!, text: String!): Boolean!
+      createFileMessage(channelId: Int!, msgKey: String!, text: String!): Boolean!
       seenMessage(channelId: Int!, messageId: Int!): Boolean!
       seenChannelMessages(channelId: Int!, limit: Int!): Boolean!
       unsendMessage(channelId: Int!, messageId: Int!): Boolean!

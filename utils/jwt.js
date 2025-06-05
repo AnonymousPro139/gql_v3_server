@@ -10,7 +10,7 @@ export const getJWT = (id, lid, role, name, avatar, phone) => {
       role: role,
       name: name,
       avatar: avatar,
-      phone: phone
+      phone: phone,
     },
     process.env.JWT_SECRET,
     {
@@ -21,8 +21,16 @@ export const getJWT = (id, lid, role, name, avatar, phone) => {
   return token;
 };
 export const getViewFileJWT = (id, channelId, name) => {
-  // 234_test123.png-567_schema.jpg --> [ '234_test123.png', '567_schema.jpg' ]--> [ '234', '567' ]
-  var tmp = name.split("-").map((e) => e.split("_")[0]);
+  // 2025/6/179/1748997297017_179_16_42379.avif-2025/6/179/1748997297018_179_16_41021.PNG-2025/6/179/1748997297022_179_16_02902.PNG  -->
+  // [2025/6/179/1748997297017_179_16_42379.avif, 2025/6/179/1748997297018_179_16_41021.PNG, 2025/6/179/1748997297022_179_16_02902.PNG] -->
+  // [1748997297017_179_16_42379, 1748997297018_179_16_41021, 1748997297022_179_16_02902 ]
+
+  var tmp = name.split("-").map((e) => {
+    var name = e.split("/")[e.split("/").length - 1];
+
+    return name.split(".")[0];
+    // return e.split("_")[0]; // ehendee iim bdag bsn
+  });
 
   const token = jwt.sign(
     {

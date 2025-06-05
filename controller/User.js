@@ -96,7 +96,7 @@ export const login = asyncHandler(async (req, res, next) => {
   });
 
   const cookieOption = {
-    expires: new Date(Date.now() + 24 * 60 * 60 * 1000), //  Тухайн browser уыцул eswel cookie hadgalj bga gazart ene token-g ene hugatsaand hadgalaad, nadruu ywuulj bgarai gj bna
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000), //  Тухайн browser eswel cookie hadgalj bga gazart ene token-g ene hugatsaand hadgalaad, nadruu ywuulj bgarai gj bna
     httpOnly: true, // server talaas l tuhain cookie-tei ajillana, cleint talaas JS-r eneruu handaj chadku bolno gsn ug
   };
 
