@@ -11,6 +11,7 @@ import requestIP from "request-ip";
 import express from "express";
 import cookieParser from "cookie-parser";
 import http from "http";
+import https from "https";
 import cors from "cors";
 import userRoute from "./routes/User.js";
 
@@ -29,9 +30,17 @@ import typeDefs from "./graphql/typedefs/index.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import { checkToken, file_protect } from "./middlewares/file_protect.js";
+import fs from "fs";
 
 const app = express();
-const httpServer = http.createServer(app);
+
+// SSL config
+const options = {
+  key: fs.readFileSync("./172.16.12.206-key.pem"),
+  cert: fs.readFileSync("./172.16.12.206.pem"),
+};
+
+const httpsServer = https.createServer(options, app);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -72,7 +81,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 // Creating the WebSocket server
 const wsServer = new WebSocketServer({
   // This is the `httpServer` we created in a previous step.
-  server: httpServer,
+  server: httpsServer,
   // Pass a different path here if app.use
   // serves expressMiddleware at a different path
   path: "/graphql",
@@ -126,7 +135,7 @@ const apolloServer = new ApolloServer({
   csrfPrevention: true, // Using graphql-upload without CSRF prevention is very insecure.
   uploads: false,
   plugins: [
-    ApolloServerPluginDrainHttpServer({ httpServer }), // HTTP server-ийг зөв shutdown хийх код
+    ApolloServerPluginDrainHttpServer({ httpServer: httpsServer }), // HTTP server-ийг зөв shutdown хийх код
     //WebSocket server-ийг зөв shutdown хийх код
     {
       async serverWillStart() {
@@ -303,7 +312,7 @@ db.message.belongsTo(db.ephkey);
 db.user.hasOne(db.push_notification);
 db.push_notification.belongsTo(db.user);
 
-httpServer.listen(process.env.PORT, () =>
+httpsServer.listen(process.env.PORT, () =>
   console.log(
     `[vers-4] Server listening on port ${process.env.PORT}, db: ${process.env.SEQUELIZE_DATABASE}`
   )
