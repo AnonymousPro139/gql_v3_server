@@ -53,72 +53,76 @@ export const deleteFriend = async (friends) => {
 export const unFriend = async (friendId, groupId, channelId, user, models) => {
   console.log("UNFRIEND friendId, groupId, chId", friendId, groupId, channelId);
 
-  await models.sequelize.transaction(async (transaction) => {
-    await models.friend.destroy(
-      {
-        where: {
-          [Op.or]: [
-            {
-              friendId,
-              userId: user.id,
-              isFriend: true,
-            },
-            {
-              friendId: user.id,
-              userId: friendId,
-              isFriend: true,
-            },
-          ],
+  try {
+    await models.sequelize.transaction(async (transaction) => {
+      await models.friend.destroy(
+        {
+          where: {
+            [Op.or]: [
+              {
+                friendId,
+                userId: user.id,
+                isFriend: true,
+              },
+              {
+                friendId: user.id,
+                userId: friendId,
+                isFriend: true,
+              },
+            ],
+          },
         },
-      },
-      { transaction }
-    );
-    await models.member.destroy(
-      {
-        where: {
-          [Op.or]: [
-            {
-              groupId,
-              userId: user.id,
-            },
-            {
-              groupId,
-              userId: friendId,
-            },
-          ],
+        { transaction }
+      );
+      await models.member.destroy(
+        {
+          where: {
+            [Op.or]: [
+              {
+                groupId,
+                userId: user.id,
+              },
+              {
+                groupId,
+                userId: friendId,
+              },
+            ],
+          },
         },
-      },
-      { transaction }
-    );
+        { transaction }
+      );
 
-    await models.group.destroy(
-      {
-        where: {
-          id: groupId,
+      await models.group.destroy(
+        {
+          where: {
+            id: groupId,
+          },
         },
-      },
-      { transaction }
-    );
-    await models.channel.destroy(
-      {
-        where: {
-          id: channelId,
+        { transaction }
+      );
+      await models.channel.destroy(
+        {
+          where: {
+            id: channelId,
+          },
         },
-      },
-      { transaction }
-    );
+        { transaction }
+      );
 
-    await models.notification.create(
-      {
-        type: "unfriend",
-        myId: user.id,
-        userId: friendId,
-      },
-      { transaction }
-    );
-  });
+      await models.notification.create(
+        {
+          type: "unfriend",
+          myId: user.id,
+          userId: friendId,
+        },
+        { transaction }
+      );
+    });
 
-  return true;
+    return true;
+  } catch (err) {
+    console.log("err unfriend", err);
+  }
 };
 
 export const myFriends = async (userId, models) => {

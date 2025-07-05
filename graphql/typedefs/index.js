@@ -213,6 +213,7 @@ export default () => {
       id: Int!
       userId: Int!
       text: String!
+      msgKey: String!
       channelId: Int!
       createdAt:String!
       dm: Boolean!

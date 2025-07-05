@@ -11,6 +11,7 @@ export const file_protect = expressAsyncHandler(async (req, res, next) => {
 
   if (!req.query.fileViewToken) {
     throw new MyError("Not accessed", 401);
+    return;
   }
 
   var data = null;

@@ -59,12 +59,14 @@ export default {
 
       if (!sender) {
         throwBadRequest("Sender User not found!");
+        return;
       }
 
       const target = await getUserGQL(target_userId, models);
 
       if (!target) {
         throwBadRequest("Target user not found!");
+        return;
       }
 
       // Хэрвээ хүсэлт илгээсэн бол дахиж илгээхгүй

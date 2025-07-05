@@ -48,9 +48,9 @@ export default {
         return;
       }
 
-      return getMessages(channelId, offset, limit, models, user);
+      return await getMessages(channelId, offset, limit, models, user);
     },
-    getMediaFiles: (
+    getMediaFiles: async (
       root,
       { channelId, offset, limit },
       { models, token, user }
@@ -65,7 +65,7 @@ export default {
         return;
       }
 
-      return getMediaFiles(channelId, offset, limit, models, user);
+      return await getMediaFiles(channelId, offset, limit, models, user);
     },
     getLastMessage: async (root, { channelId }, { models, token, user }) => {
       if (!user || !token) {
@@ -77,7 +77,7 @@ export default {
         return;
       }
 
-      return getLastMessage(channelId, models, user);
+      return await getLastMessage(channelId, models, user);
     },
   },
   Mutation: {
@@ -210,7 +210,13 @@ export default {
             id: seen.id,
             msgId: seen.messageId,
             // userId: seen.userId,
-            user: user,
+            user: {
+              id: user.id,
+              name: user.name,
+              avatar: user.avatar,
+              phone: user.phone,
+              email: "",
+            },
             channelId: channelId,
             seen: seen.seen,
           },
@@ -307,7 +313,13 @@ export default {
         reactionMessage: {
           id: react.id,
           msgId: react.messageId,
-          user: user,
+          user: {
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar,
+            phone: user.phone,
+            email: "",
+          },
           channelId: channelId,
           reaction: react.reaction,
         },

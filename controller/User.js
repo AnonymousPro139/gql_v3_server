@@ -118,22 +118,35 @@ export const register = asyncHandler(async (req, res, next) => {
     throw new MyError("Pass the arguments!", 400);
   }
 
-  let check = await db.user.findOne({ where: { email: req.body.email } });
+  const decEmail = decrypt(req.body.email);
+  const decPhone = decrypt(req.body.phone);
+
+  let check = await db.user.findOne({ where: { email: decEmail } });
 
   if (check) {
     throw new MyError("Unable to register!", 401);
+    return;
   }
-  check = await db.user.findOne({ where: { phone: req.body.phone } });
+  check = await db.user.findOne({ where: { phone: decPhone } });
 
   if (check) {
     throw new MyError("Unable to register!", 401);
   }
 
   const NAME_SPACE = "b38451d2-3268-4b3a-88b1-4f2fea6ef27d";
-  req.body.lid = uuidv5(req.body.phone, NAME_SPACE);
+  req.body.lid = uuidv5(decPhone, NAME_SPACE);
   req.body.role = "user";
 
-  const user = await db.user.create(req.body);
+  // const user = await db.user.create(req.body);
+
+  const user = await db.user.create({
+    phone: decPhone,
+    name: decrypt(req.body.name),
+    email: decEmail,
+    password: decrypt(req.body.password),
+    lid: req.body.lid,
+    role: req.body.role,
+  });
 
   await db.avatar.create({
     userId: user.id,

@@ -48,6 +48,11 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
+      "http://172.16.12.39:3000",
+      "https://172.16.12.23:3000",
+
+      "http://172.16.12.61:3000",
+      "https://172.16.12.61:3000",
       "http://localhost:3000",
       "http://localhost:3001",
       "http://172.16.12.21:3000",
