@@ -90,7 +90,7 @@ export const getPrivateGroups = async (models, id) => {
           id: tmp?.ephkeys[tmp.ephkeys.length - 1]?.id ?? 0,
           userId: tmp?.ephkeys[tmp.ephkeys.length - 1]?.userId ?? 0,
           ephkey: tmp?.ephkeys[tmp.ephkeys.length - 1]?.ephkey ?? "",
-        }
+        },
       };
     }) ?? null
   );
@@ -245,4 +245,34 @@ export const leftGroup = async (groupId, groupName, models, user) => {
     console.log("error leftGroup:", err);
     return false;
   }
+};
+
+export const changeUpdatedAtGroup = async (channelId, updatedAt, models) => {
+  // const group = await models.group.findOne({
+  //   where: {
+  //     channelId: channelId,
+  //   },
+  // });
+
+  // // console.log("group.updatedAt:", group.updatedAt);
+  // // console.log("updatedAt", updatedAt);
+  // // console.log('converted', new Date(updatedAt));
+  // group.updatedAt = new Date(updatedAt);
+  // await group.save({ silent: true });
+
+  // console.log("group", group);
+
+  // await group.update({ updatedAt: updatedAt });
+  // await group.save();
+
+  // console.log("grup2", group);
+
+  const [updatedCount] = await models.group.update(
+    { updated_at: updatedAt },
+    { where: { channelId: channelId }, silent: true }
+  );
+
+  console.log("count:", updatedCount);
+
+  return;
 };

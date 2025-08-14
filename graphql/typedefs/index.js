@@ -264,6 +264,7 @@ export default () => {
       id: Int!
       name: String!
       createdAt: String!
+      updated_at: String!
       channelId: Int!
     } 
 

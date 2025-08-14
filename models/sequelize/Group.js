@@ -1,3 +1,5 @@
+import { time } from "console";
+
 const Group = function (sequelize, DataTypes) {
   return sequelize.define(
     "group",
@@ -12,10 +14,18 @@ const Group = function (sequelize, DataTypes) {
         type: DataTypes.STRING(24),
         allowNull: false,
       },
-      
+      updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       tableName: "group",
+      timestamps: false,
     }
   );
 };

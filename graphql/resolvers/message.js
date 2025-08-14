@@ -25,6 +25,7 @@ import {
   sendMultiPushNotification,
   sendPushNotification,
 } from "../../controller/Notification.js";
+import { changeUpdatedAtGroup } from "../../controller/Group.js";
 
 const pubsub = new RedisPubSub({
   publisher: new Redis(redisOptions),
@@ -113,6 +114,11 @@ export default {
           name: user.name,
         },
       });
+
+      // set msg.createdAt to updatedAt of group
+      console.log("msg", msg.createdAt);
+
+      await changeUpdatedAtGroup(channelId, msg.createdAt, models);
 
       if (msg.dm) {
         // sending push notification
