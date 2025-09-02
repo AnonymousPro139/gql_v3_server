@@ -116,8 +116,6 @@ export default {
       });
 
       // set msg.createdAt to updatedAt of group
-      console.log("msg", msg.createdAt);
-
       await changeUpdatedAtGroup(channelId, msg.createdAt, models);
 
       if (msg.dm) {

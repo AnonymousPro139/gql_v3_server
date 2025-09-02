@@ -96,6 +96,27 @@ export const getPrivateGroups = async (models, id) => {
   );
 };
 
+export const checkPrivateGroups = async (models, id) => {
+  const user = await models.user.findOne({
+    where: {
+      id,
+    },
+    include: {
+      model: models.group,
+      attributes: ["id"],
+      where: {
+        name: "private",
+      },
+    },
+  });
+
+  return (
+    user?.groups.map((el) => {
+      return { id: el.id };
+    }) ?? null
+  );
+};
+
 export const getGroupWithMembers = async (groupId, userId, models) => {
   // Тухайн user энэ групп-т байгаа эсэхийг шалгах
   const check = await models.member.findOne({
@@ -248,31 +269,14 @@ export const leftGroup = async (groupId, groupName, models, user) => {
 };
 
 export const changeUpdatedAtGroup = async (channelId, updatedAt, models) => {
-  // const group = await models.group.findOne({
-  //   where: {
-  //     channelId: channelId,
-  //   },
-  // });
-
-  // // console.log("group.updatedAt:", group.updatedAt);
-  // // console.log("updatedAt", updatedAt);
-  // // console.log('converted', new Date(updatedAt));
-  // group.updatedAt = new Date(updatedAt);
-  // await group.save({ silent: true });
-
-  // console.log("group", group);
-
-  // await group.update({ updatedAt: updatedAt });
-  // await group.save();
-
-  // console.log("grup2", group);
-
   const [updatedCount] = await models.group.update(
     { updated_at: updatedAt },
     { where: { channelId: channelId }, silent: true }
   );
 
-  console.log("count:", updatedCount);
+  if (updatedCount > 0) {
+    return true;
+  }
 
-  return;
+  return false;
 };

@@ -41,6 +41,9 @@ export default () => {
       """ Өөрийн харилцаж болох private группууд нь user-тэйгээ ирнэ """
       getPrivateGroups: [PrivateGroupResponse!]
 
+         """ Өөрийн харилцаж болох private группууд ирнэ, client tal deerh data n oorclogdson esehiig medeh zorilgtoi """
+      checkPrivateGroups: [checkPrivateGroupResponse!]
+
       """ Өөрийн харилцаж болох группын бүх гишүүдийг авах """
       getGroupWithMembers(groupId: Int!): getGroupWithMembersResponse!
 
@@ -269,11 +272,15 @@ export default () => {
     } 
 
     type PrivateGroupResponse {
-      group: Group!,
+      group: Group!
       user: User!
       keys: PublicKeys!
       ephkey: EphKey!
       
+    }
+
+    type checkPrivateGroupResponse {
+        id: Int!
     }
 
     type PushToken {
