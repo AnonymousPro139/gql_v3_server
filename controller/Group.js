@@ -96,23 +96,20 @@ export const getPrivateGroups = async (models, id) => {
   );
 };
 
-export const checkPrivateGroups = async (models, id) => {
+export const checkSyncGroups = async (models, id) => {
   const user = await models.user.findOne({
     where: {
       id,
     },
     include: {
       model: models.group,
-      attributes: ["id"],
-      where: {
-        name: "private",
-      },
+      attributes: ["id", "name"],
     },
   });
 
   return (
     user?.groups.map((el) => {
-      return { id: el.id };
+      return { id: el.id, name: el.name };
     }) ?? null
   );
 };

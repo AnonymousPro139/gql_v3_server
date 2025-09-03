@@ -18,7 +18,7 @@ import {
   getAllGroups,
   removeUserFromGroup,
   leftGroup,
-  checkPrivateGroups,
+  checkSyncGroups,
 } from "../../controller/Group.js";
 import { createMember } from "../../controller/Member.js";
 
@@ -59,13 +59,13 @@ export default {
       return getPrivateGroups(models, user.id);
     },
 
-    checkPrivateGroups: (root, args, { models, token, user }) => {
+    checkSyncGroups: (root, args, { models, token, user }) => {
       if (!user || !token) {
         throwUnauthenicated();
         return;
       }
 
-      return checkPrivateGroups(models, user.id);
+      return checkSyncGroups(models, user.id);
     },
 
     getGroupWithMembers: (root, { groupId }, { models, token, user }) => {
