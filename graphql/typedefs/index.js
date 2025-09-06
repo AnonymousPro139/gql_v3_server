@@ -14,6 +14,9 @@ export default () => {
       """ Тухайн channel-ийн бүх message-г авна"""
       getMessages(channelId: Int!, offset: Int!, limit: Int!): [Message!]!
 
+           """ Тухайн channel-ийн messageId-naas hoishih buh message-г авна"""
+      getMessagesFromMessageId(channelId: Int!, lastMsgId: Int!, offset: Int!, limit: Int!): [Message!]!
+
       getMediaFiles(channelId: Int!, offset: Int!, limit: Int!): [mediaFilesResponse!]!
 
       """ Өөрийн аватарыг авна"""
@@ -101,6 +104,9 @@ export default () => {
       setPushToken(pushtoken:String!):  Boolean!
 
       removePushToken:  Boolean!
+
+      getPrivateGroupsByIds(ids: String!): [PrivateGroupResponse!]
+      getGroupsByIds(ids: String!): [Group!]
     }
 
     type Subscription {

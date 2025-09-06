@@ -19,6 +19,7 @@ import {
   unsendMessage,
   seenChannelMessages,
   getMediaFiles,
+  getMessagesFromMessageId,
 } from "../../controller/Message.js";
 import { findChannelForUser } from "../../controller/User.js";
 import {
@@ -50,6 +51,30 @@ export default {
       }
 
       return await getMessages(channelId, offset, limit, models, user);
+    },
+    getMessagesFromMessageId: async (
+      root,
+      { channelId, offset, limit, lastMsgId = 0 },
+      { models, token, user }
+    ) => {
+      if (!user || !token) {
+        throwUnauthenicated();
+        return;
+      }
+
+      if (!channelId || !limit) {
+        throwBadRequest("Variables not received");
+        return;
+      }
+
+      return await getMessagesFromMessageId(
+        channelId,
+        lastMsgId,
+        offset,
+        limit,
+        models,
+        user
+      );
     },
     getMediaFiles: async (
       root,

@@ -233,7 +233,6 @@ export const getMessages = async (channelId, offset, limit, models, user) => {
     return;
   }
 
-  console.log("GET MESSAGES channelId:", channelId);
   const messages = await models.message.findAll({
     where: {
       channelId: channelId,
@@ -412,4 +411,94 @@ export const getLastMessage = async (channelId, models, user) => {
   }
 
   return msg;
+};
+
+export const getMessagesFromMessageId = async (
+  channelId,
+  lastMsgId,
+  offset,
+  limit,
+  models,
+  user
+) => {
+  const check = await checkChannelAccess(channelId, user.id, models);
+
+  if (!check) {
+    throwBadRequest("You are not in this channel!");
+    return;
+  }
+
+  const messages = await models.message.findAll({
+    where: {
+      channelId: channelId,
+      id: {
+        [Op.gt]: lastMsgId,
+      },
+    },
+    order: [["createdAt", "DESC"]],
+    limit: limit,
+    offset: offset,
+    include: [
+      {
+        model: models.user,
+        attributes: ["name"],
+        include: {
+          model: models.avatar,
+          attributes: ["avatar_link"],
+        },
+      },
+      {
+        model: models.message_seen,
+        required: false,
+        attributes: ["userId"],
+        where: {
+          seen: true,
+        },
+        include: {
+          model: models.user,
+          include: {
+            model: models.avatar,
+            attributes: ["avatar_link"],
+          },
+        },
+      },
+      {
+        model: models.message_reaction,
+        required: false,
+        attributes: ["reaction"],
+        include: {
+          model: models.user,
+          include: {
+            model: models.avatar,
+            attributes: ["avatar_link"],
+          },
+        },
+      },
+    ],
+  });
+
+  return messages.map((msg) => {
+    var tmp = msg;
+    tmp.avatar = msg.user.avatar?.avatar_link ?? "no-link";
+    tmp.seen =
+      msg.message_seens?.map((e) => {
+        var data = e.user;
+        data.avatar = e.user.avatar?.avatar_link ?? null;
+
+        return data;
+      }) ?? [];
+    tmp.reaction =
+      msg.message_reactions?.map((e) => {
+        var data = e.user;
+        data.avatar = e.user.avatar?.avatar_link ?? null;
+
+        return {
+          reaction: e.reaction,
+          user: data,
+        };
+      }) ?? [];
+
+    tmp.name = msg.user.name;
+    return tmp;
+  });
 };

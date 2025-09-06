@@ -27,6 +27,24 @@ export const getGroups = async (models, id) => {
 
   return user?.groups ?? null;
 };
+export const getGroupsByIds = async (models, id, groupIds) => {
+  const ids = groupIds.split(",");
+
+  const user = await models.user.findOne({
+    where: {
+      id,
+    },
+    include: {
+      model: models.group,
+      where: {
+        name: { [Op.not]: "private" },
+        id: { [Op.in]: ids },
+      },
+    },
+  });
+
+  return user?.groups ?? null;
+};
 
 export const getAllGroups = async (models) => {
   const groups = await models.group.findAll({
@@ -47,6 +65,67 @@ export const getPrivateGroups = async (models, id) => {
       model: models.group,
       where: {
         name: "private",
+      },
+      include: {
+        model: models.user,
+        where: {
+          id: { [Op.not]: id },
+        },
+
+        include: [
+          {
+            model: models.avatar,
+            attributes: ["avatar_link"],
+          },
+          {
+            model: models.key,
+          },
+          {
+            model: models.ephkey,
+            attributes: ["id", "ephkey", "userId", "createdAt"],
+          },
+        ],
+      },
+    },
+  });
+
+  return (
+    user?.groups.map((el) => {
+      var tmp = el.dataValues.users[0];
+      tmp.avatar = tmp.avatar.avatar_link;
+
+      return {
+        group: el.dataValues,
+        user: tmp,
+        keys: {
+          id: tmp?.keys[0]?.id ?? 0,
+          IdPubKey: tmp?.keys[0]?.identityKey ?? "",
+          SpPubKey: tmp?.keys[0]?.signedPreKey ?? "",
+          SignaturePubKey: tmp?.keys[0]?.signaturePubKey ?? "",
+          Signature: tmp?.keys[0]?.signature ?? "",
+        },
+        ephkey: {
+          id: tmp?.ephkeys[tmp.ephkeys.length - 1]?.id ?? 0,
+          userId: tmp?.ephkeys[tmp.ephkeys.length - 1]?.userId ?? 0,
+          ephkey: tmp?.ephkeys[tmp.ephkeys.length - 1]?.ephkey ?? "",
+        },
+      };
+    }) ?? null
+  );
+};
+export const getPrivateGroupsByIds = async (models, id, groupIds) => {
+  const ids = groupIds.split(",");
+  console.log("ids", ids);
+
+  const user = await models.user.findOne({
+    where: {
+      id,
+    },
+    include: {
+      model: models.group,
+      where: {
+        name: "private",
+        id: { [Op.in]: ids },
       },
       include: {
         model: models.user,

@@ -19,6 +19,8 @@ import {
   removeUserFromGroup,
   leftGroup,
   checkSyncGroups,
+  getPrivateGroupsByIds,
+  getGroupsByIds,
 } from "../../controller/Group.js";
 import { createMember } from "../../controller/Member.js";
 
@@ -307,6 +309,34 @@ export default {
         console.log("error leftGroup: ", err);
         return false;
       }
+    },
+
+    getPrivateGroupsByIds: async (root, { ids }, { models, token, user }) => {
+      if (!user || !token) {
+        throwUnauthenicated();
+        return;
+      }
+
+      if (!ids) {
+        throwBadRequest();
+        return;
+      }
+
+      return await getPrivateGroupsByIds(models, user.id, ids);
+    },
+
+    getGroupsByIds: async (root, { ids }, { models, token, user }) => {
+      if (!user || !token) {
+        throwUnauthenicated();
+        return;
+      }
+
+      if (!ids) {
+        throwBadRequest();
+        return;
+      }
+
+      return await getGroupsByIds(models, user.id, ids);
     },
   },
   Subscription: {
