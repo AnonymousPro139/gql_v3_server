@@ -4,7 +4,9 @@ import dotenv from "dotenv";
 // });
 dotenv.config({ path: "./config/config.env" });
 import { ApolloServer } from "@apollo/server";
-import { expressMiddleware } from "@apollo/server/express4";
+// import { expressMiddleware } from "@apollo/server/express4"; // legacy
+import { expressMiddleware } from "@as-integrations/express5";
+
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
 import requestIP from "request-ip";
@@ -17,7 +19,8 @@ import userRoute from "./routes/User.js";
 
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
+// import { useServer } from "graphql-ws/lib/use/ws"; // legacy
+import { useServer } from "graphql-ws/use/ws";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import db from "./config/db_mysql.js";

@@ -104,7 +104,7 @@ export default {
           await finished(out)
             .then(() => {})
             .catch((err) => {
-              console.log(err);
+              console.log("hahhaha nono error:", err);
               throw new MyError("oho nono ", 401);
             });
 
